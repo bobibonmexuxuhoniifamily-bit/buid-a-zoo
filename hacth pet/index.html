@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Build A Zoo 🦁 - Circus Showtime Update</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="weather-effect" class="weather-layer"></div>
+
+    <div id="auth-box" class="popup login-center" style="display:block;">
+        <h2 style="text-align:center;">ZOO LOGIN 🎭</h2>
+        <input type="text" id="username" placeholder="Tên sở thú..." style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:2px solid #ddd; box-sizing:border-box;">
+        <input type="password" id="password" placeholder="Mật khẩu..." style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:2px solid #ddd; box-sizing:border-box;">
+        <button class="btn-3d blue" onclick="handleAuth('login')">VÀO GAME</button>
+        <button class="btn-3d purple" onclick="handleAuth('register')">TẠO MỚI</button>
+    </div>
+
+    <div id="game-card" class="hidden">
+        <div class="main-container">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b id="zoo-name">My Zoo</b> 
+                    <span style="font-size:12px; color:#666;">LV.<span id="zoo-lv">1</span></span>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:18px; font-weight:bold; color:#2d3436;">💰 <span id="zoo-coins">0</span></div>
+                    <div style="font-size:14px; font-weight:bold; color:#0984e3;">🎟️ <span id="zoo-tickets">0</span></div>
+                </div>
+            </div>
+
+            <div id="weather-box" style="margin-top:10px; font-size:13px; background:#eee; padding:5px 10px; border-radius:10px; display:inline-block;">
+                Thời tiết: <span id="weather-icon">☀️</span>
+            </div>
+
+            <div id="zoo-display"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <span style="font-size:12px; font-weight:bold; color:#666;">CHUỒNG THÚ: <span id="slot-count">0/3</span></span>
+                <button id="upgrade-btn" class="btn-3d green hidden" style="width:auto; padding:5px 15px; font-size:11px;" onclick="upgradeZoo()">NÂNG CẤP</button>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="btn-3d blue" onclick="toggle('shop-gui')">🛒 CỬA HÀNG</button>
+                <button class="btn-3d purple" onclick="toggle('inv-gui')">🎒 KHO ĐỒ</button>
+            </div>
+            
+            <button class="btn-3d red" style="margin-top:10px; font-size:11px; padding:5px;" onclick="logout()">THOÁT</button>
+        </div>
+		
+		<div class="medal-copyright">
+                   Made with 💎 by <span>Medal</span> • Copyright © 2024
+            </div>  
+    </div>
+
+    <div id="shop-gui" class="popup">
+        <b>🛒 CỬA HÀNG TRỨNG</b>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+            <button class="btn-3d green" onclick="buyEgg('grass', 50)">Trứng Cỏ (50💰)</button>
+            <button class="btn-3d blue" onclick="buyEgg('forest', 1000)">Trứng Rừng (1k💰)</button>
+            <button class="btn-3d blue" style="background:#74b9ff" onclick="buyEgg('siberia', 2000000000)">Siberia (2B💰)</button>
+			<button class="btn-3d blue" style="background:#00cec9" onclick="buyEgg('seadragon', 100000000000)">Rồng Biển (100B💰)</button>
+            <button class="btn-3d purple" onclick="buyEgg('magic', 5)">Ma Thuật (5🎟️)</button>
+            <button class="btn-3d red" style="background:#2d3436" onclick="buyEgg('narrator', 10)">Kể Chuyện (10🎟️)</button>
+			<button class="btn-3d purple" style="background:#2c3e50" onclick="useSacrificialTable()">Bàn Tế Lễ Chimera (4 Divine)</button>
+			<button class="btn-3d orange" style="background:#e67e22" onclick="buyEgg('desert', 500000000000)">Trứng Sa Mạc (500B💰)</button>
+            <button class="btn-3d orange" onclick="toggle('lucky-wheel')">🎡 VÒNG QUAY MAY MẮN</button>
+
+    <div id="lucky-wheel" class="popup">
+        <b>🎡 VÒNG QUAY MEDAL</b>
+        <p style="font-size: 12px;">Chi phí: 10 🎟️ / lượt</p>
+        <div id="wheel-container" style="font-size: 50px; margin: 20px 0; transition: transform 3s cubic-bezier(0.1, 0, 0.1, 1);">
+        ❓
+    </div>
+    <button id="spin-btn" class="btn-3d purple" onclick="spinWheel()">QUAY NGAY!</button>
+    <button class="btn-3d red" onclick="toggle('lucky-wheel')">ĐÓNG</button>
+</div>
+        </div>
+        <button class="btn-3d red" onclick="toggle('shop-gui')">ĐÓNG</button>
+    </div>
+
+    <div id="inv-gui" class="popup">
+        <b>🎒 KHO ĐỒ</b>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+            <button id="sell-btn" class="btn-3d orange" style="padding: 8px; font-size: 11px;" onclick="toggleSellMode()">🗑️ CHẾ ĐỘ BÁN</button>
+            <button class="btn-3d red" style="padding: 8px; font-size: 11px;" onclick="sellAll()">💥 BÁN HẾT</button>
+        </div>
+        <hr>
+        <div id="inv-list"></div>
+        <button class="btn-3d red" style="margin-top:15px;" onclick="toggle('inv-gui')">ĐÓNG</button>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="logic.js"></script>
+</body>
+</html>

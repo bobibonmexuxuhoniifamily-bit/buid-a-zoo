@@ -1,0 +1,322 @@
+body { 
+    background: #55efc4; 
+    min-height: 100vh; 
+    margin: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-family: 'Segoe UI', sans-serif; 
+    overflow: hidden; 
+}
+
+.hidden { display: none !important; }
+
+/* Khung chính */
+.main-container { 
+    background: #fdfdfd; 
+    padding: 25px; 
+    border-radius: 30px; 
+    border: 5px solid #333; 
+    width: 420px; 
+    box-shadow: 15px 15px 0px rgba(0,0,0,0.1); 
+    z-index: 100; 
+    position: relative; 
+    box-sizing: border-box;
+}
+
+/* Grid chuồng thú */
+#zoo-display { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); 
+    gap: 10px; 
+    margin: 20px 0; 
+    padding: 10px;
+    background: #f0f0f0; 
+    border-radius: 15px; 
+    border: 2px inset #ddd;
+}
+
+#inv-list { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; 
+    max-height: 300px; 
+    overflow-y: auto; 
+    padding-right: 5px;
+}
+
+.pet-slot, .slot {
+    width: 75px;
+    height: 75px;
+    min-width: 75px;
+    min-height: 75px;
+    background: white;
+    border: 3px solid #dfe6e9;
+    border-radius: 18px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    box-sizing: border-box;
+    overflow: visible !important; /* Hiện huy hiệu lồi và hào quang */
+}
+
+/* Sao Yêu thích - Góc trái trên - Lồi 1/2 */
+.fav-star {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 13px;
+    background: white;
+    border: 2px solid #fdcb6e;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Thẻ đột biến - Góc phải dưới - Lồi 1/2 */
+.mutation-tag {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    z-index: 30;
+    box-shadow: -2px -2px 5px rgba(0,0,0,0.2);
+}
+
+.pet-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.pet-slot:hover, .slot:hover { transform: scale(1.05); border-color: #74b9ff; }
+
+.slot.sell-mode { border: 3px dashed #ff7675; animation: shake 0.5s infinite; }
+
+/* Hiệu ứng Đột biến & Hiếm */
+.vfx-burn { box-shadow: 0 0 15px #ff7675; border-color: #ff7675 !important; }
+.vfx-wet { box-shadow: 0 0 15px #74b9ff; border-color: #74b9ff !important; }
+.vfx-frozen { box-shadow: 0 0 15px #dfe6e9; border-color: #a29bfe !important; }
+.vfx-newyear { box-shadow: 0 0 15px #fab1a0; border-color: #d63031 !important; }
+
+/* Spotlight VFX */
+.vfx-spotlight { 
+    box-shadow: 0 0 20px #fdcb6e; 
+    border-color: #fdcb6e !important; 
+    background: radial-gradient(circle, #fff 40%, #ffeaa7 100%);
+    animation: pulse-gold 2s infinite;
+}
+
+/* Prismatic Glow */
+/* Hiệu ứng viền cầu vồng lấp lánh cho bậc Prismatic */
+.prismatic-border {
+    border: 3px solid #fff !important;
+    position: relative;
+    overflow: hidden;
+    animation: prismatic-glow 3s linear infinite, shake 0.5s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Luồng sáng cầu vồng chạy quanh pet */
+.prismatic-border::before {
+    content: "";
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(
+        #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000
+    );
+    animation: rainbow-rotate 4s linear infinite;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+/* Đảm bảo Icon Pet nằm trên lớp cầu vồng */
+.prismatic-border .pet-icon-wrapper {
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 5px white);
+}
+
+/* Keyframes cho hiệu ứng xoay cầu vồng */
+@keyframes rainbow-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Keyframes cho hào quang tỏa sáng */
+@keyframes prismatic-glow {
+    0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+    20% { border-color: #ffff00; box-shadow: 0 0 20px #ffff00; }
+    40% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
+    60% { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; }
+    80% { border-color: #0000ff; box-shadow: 0 0 10px #0000ff; }
+    100% { border-color: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
+}
+
+/* Layer thời tiết */
+.weather-layer {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    transition: background 1s ease;
+    will-change: transform; /* Báo trước cho trình duyệt để tối ưu */
+    transform: translateZ(0); /* Kích hoạt tăng tốc phần cứng */
+}
+
+/* --- 1. SUNNY: Nắng dịu nhẹ --- */
+.weather-layer.sunny {
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 150, 0.1) 0%, transparent 40%);
+}
+
+/* --- 2. RAINY: Mưa mượt mà --- */
+.weather-layer.rainy::before {
+    content: "";
+    position: absolute;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(transparent, transparent 90%, rgba(255, 255, 255, 0.1) 95%);
+    background-size: 1px 60px;
+    animation: rain-move 0.3s linear infinite;
+}
+
+/* --- 3. SNOWY: Tuyết rơi tối ưu --- */
+.weather-layer.snowy::before {
+    content: "• • •"; /* Dùng dấu chấm nhẹ hơn icon ❄ */
+    color: white;
+    position: absolute; width: 100%;
+    text-shadow: 20vw 20vh, 60vw 40vh, 40vw 70vh, 80vw 10vh;
+    opacity: 0.4;
+    animation: snow-move 8s linear infinite;
+}
+
+/* --- 4. THUNDERSTORM: Chớp giật (Không lag) --- */
+.weather-layer.thunderstorm {
+    background: rgba(10, 10, 30, 0.2);
+    animation: flash-fast 5s infinite;
+}
+
+/* --- 5. DESERT: Bão cát mờ --- */
+.weather-layer.desert {
+    background: rgba(230, 126, 34, 0.1);
+}
+.weather-layer.desert::after {
+    content: "";
+    position: absolute; width: 200%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: sand-move 4s linear infinite;
+}
+
+/* --- 6. SIBERIA: Băng giá --- */
+.weather-layer.siberia {
+    box-shadow: inset 0 0 80px rgba(0, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* --- ANIMATIONS TỐI GIẢN --- */
+@keyframes rain-move {
+    from { background-position: 0 0; }
+    to { background-position: 0 600px; }
+}
+
+@keyframes snow-move {
+    from { transform: translateY(-100px); }
+    to { transform: translateY(100vh); }
+}
+
+@keyframes flash-fast {
+    0%, 94%, 98% { background: transparent; }
+    96% { background: rgba(255, 255, 255, 0.2); }
+}
+
+@keyframes sand-move {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+}
+
+/* Popup hệ thống */
+.popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; padding: 25px; border-radius: 25px; border: 5px solid #333;
+    z-index: 1000; width: 350px; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+/* Thẻ đột biến */
+.mutation-tag {
+    position: absolute; bottom: -5px; right: -5px; width: 22px; height: 22px;
+    background: white; border: 2px solid #333; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10;
+}
+
+/* Nút bấm 3D */
+.btn-3d {
+    padding: 12px; border: none; border-radius: 15px; font-weight: bold; color: white;
+    cursor: pointer; transition: 0.1s; width: 100%; margin-bottom: 8px;
+    border-bottom: 5px solid rgba(0,0,0,0.2); text-transform: uppercase;
+}
+
+.btn-3d:active { transform: translateY(3px); border-bottom-width: 2px; }
+.btn-3d.blue { background: #0984e3; }
+.btn-3d.green { background: #26de81; }
+.btn-3d.orange { background: #f39c12; }
+.btn-3d.red { background: #eb4d4b; }
+.btn-3d.purple { background: #6c5ce7; }
+
+/* Animations */
+@keyframes shake {
+    0% { transform: rotate(1deg); } 50% { transform: rotate(-1deg); } 100% { transform: rotate(1deg); }
+}
+
+@keyframes pulse-gold {
+    0% { transform: scale(1); box-shadow: 0 0 10px #fdcb6e; }
+    50% { transform: scale(1.02); box-shadow: 0 0 25px #f1c40f; }
+    100% { transform: scale(1); box-shadow: 0 0 10px #fdcb6e; }
+}
+
+@keyframes rainbow-border {
+    0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); }
+}.weather-layer.desert { background: rgba(241, 196, 15, 0.2); box-shadow: inset 0 0 150px rgba(230, 126, 34, 0.4); }
+.vfx-desert { box-shadow: 0 0 15px #e67e22; border-color: #f1c40f !important; animation: sand-storm 3s infinite; }
+
+@keyframes sand-storm {
+    0% { filter: sepia(0.5) saturate(1); }
+    50% { filter: sepia(0.8) saturate(2); }
+    100% { filter: sepia(0.5) saturate(1); }
+}#wheel-container {
+    width: 100px; height: 100px;
+    margin: 20px auto;
+    background: #fff;
+    border: 5px solid #f1c40f;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
+}
+
+.spinning {
+    animation: wheel-shake 0.1s infinite;
+}
+
+@keyframes wheel-shake {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+}
